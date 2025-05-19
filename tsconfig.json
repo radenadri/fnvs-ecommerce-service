@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "inlineSources": true,
+    "isolatedModules": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noImplicitAny": true,
+    "outDir": "./dist",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "sourceRoot": "src",
+    "strict": true,
+    "target": "esnext",
+    "types": ["node"]
+  },
+  "exclude": ["node_modules", "dist"],
+  "include": ["./*.js", "src/**/*.ts", "tests/**/*.ts", "drizzle.config.ts"]
+}

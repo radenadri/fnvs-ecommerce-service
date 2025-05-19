@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  ecommerce-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${PORT}:${PORT}"
+    environment:
+      - NODE_ENV=production
+      - PORT=${PORT}
+      - API_VERSION=${API_VERSION}
+      - ORIGIN=${ORIGIN}
+      - TURSO_DATABASE_URL=${TURSO_DATABASE_URL}
+      - TURSO_AUTH_TOKEN=${TURSO_AUTH_TOKEN}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_IN=${JWT_EXPIRES_IN}
+      - SENTRY_DSN=${SENTRY_DSN}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - RESEND_API_KEY=${RESEND_API_KEY}
+      - RATE_LIMIT_WINDOW_MS=${RATE_LIMIT_WINDOW_MS}
+      - RATE_LIMIT_MAX=${RATE_LIMIT_MAX}
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      - redis
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: [ "CMD", "wget", "-qO-", "http://localhost:${PORT}/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - ecommerce-network
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+
+networks:
+  ecommerce-network:
+    driver: bridge
+
+volumes:
+  redis-data:
