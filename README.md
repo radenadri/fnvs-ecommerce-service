@@ -16,10 +16,10 @@ This service handles product listings and authentication for an ecommerce platfo
 
 ## Technology Stack
 
-- TypeScript (strict mode)
+- TypeScript
 - Node.js
 - Express.js
-- SQLite with Drizzle ORM
+- Drizzle ORM with SQLite database over Turso
 - JWT for authentication
 - Zod for validation
 - Swagger for API documentation
