@@ -23,7 +23,7 @@ This service handles product listings and authentication for an ecommerce platfo
 - JWT for authentication
 - Zod for validation
 - Swagger for API documentation
-- Jest for testing
+- Vitest for testing
 
 ## Project Structure
 
