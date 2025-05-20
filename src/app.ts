@@ -24,7 +24,6 @@ export const createApp = (): Application => {
   // Middlewares
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
-  app.use(cors());
   app.use(helmet());
   app.use(cookies());
   app.use(bodyParser.json());
