@@ -32,7 +32,7 @@ export const createApp = (): Application => {
   app.use(
     cors({
       credentials: true,
-      origin: config.cors.origin,
+      origin: config.cors.origin.split(','),
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     }),
   );

@@ -54,7 +54,7 @@ export const config: Config = {
     apiVersion: process.env.API_VERSION || 'v1',
   },
   cors: {
-    origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+    origin: process.env.ORIGIN || 'http://localhost:3000',
   },
   database: {
     url: process.env.TURSO_DATABASE_URL || '',
