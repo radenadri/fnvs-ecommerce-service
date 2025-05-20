@@ -101,7 +101,7 @@ export class UserService {
       }
 
       // Remove password from response
-      const { password: _, ...userWithoutPassword } = user;
+      const { password: _password, accessToken: _accessToken, ...userWithoutPassword } = user;
 
       // Generate JWT token
       const token = generateToken({
