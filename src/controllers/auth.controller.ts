@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { UserService } from '@/services/user.service';
 import { LoginUserSchema, RegisterUserSchema } from '@/models/user';
+import { config } from '@/config';
 
 const userService = new UserService();
 
@@ -50,6 +51,20 @@ export class AuthController {
     try {
       const loginData = LoginUserSchema.parse(req.body);
       const result = await userService.login(loginData);
+
+      res.cookie('accessToken', result.token, {
+        httpOnly: true,
+        secure: config.server.env === 'production',
+        sameSite: 'lax',
+        maxAge: 60 * 60 * 1000 // 60 minutes
+      });
+
+      res.cookie('refreshToken', result.token, {
+        httpOnly: true,
+        secure: config.server.env === 'production',
+        sameSite: 'lax',
+        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+      });
 
       res.status(200).json({
         success: true,
@@ -151,13 +166,17 @@ export class AuthController {
     next: NextFunction
   ): Promise<void> {
     try {
-      const token = req.headers.authorization?.split(' ')[1];
+      const token = req.cookies.accessToken;
 
       if (!token) {
         throw new Error('Unauthorized');
       }
 
       await userService.logout(token);
+
+      // Destroy cookie
+      res.clearCookie('accessToken');
+      res.clearCookie('refreshToken');
 
       res.status(200).json({
         success: true,
@@ -201,7 +220,7 @@ export class AuthController {
     next: NextFunction
   ): Promise<void> {
     try {
-      const token = req.headers.authorization?.split(' ')[1];
+      const token = req.cookies.accessToken;
 
       if (!token) {
         throw new Error('Unauthorized');

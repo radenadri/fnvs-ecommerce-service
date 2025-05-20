@@ -1,6 +1,5 @@
 import express, { Application } from 'express';
 import bodyParser from 'body-parser';
-import cookies from 'cookie-parser';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
@@ -14,6 +13,7 @@ import { swaggerSpec } from '@/utils/swagger';
 import healthRoutes from '@/routes/health.routes';
 import productRoutes from '@/routes/product.routes';
 import authRoutes from '@/routes/auth.routes';
+import cookies from 'cookie-parser';
 
 export const createApp = (): Application => {
   const app: Application = express();
