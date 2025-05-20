@@ -1,14 +1,13 @@
 import { db } from '@/db';
 import { LoginUser, users } from '@/models/user';
 import { RegisterUser, UserResponse } from '@/models/user';
-import { comparePassword, generateToken, hashPassword } from '@/utils/auth';
+import { comparePassword, generateToken, hashPassword, verifyToken } from '@/utils/auth';
 import {
   ConflictError,
   NotFoundError,
   UnauthorizedError,
 } from '@/utils/errors';
 import { logger } from '@/utils/logger';
-import { formatISO } from 'date-fns';
 import { eq } from 'drizzle-orm';
 
 export class UserService {
@@ -44,10 +43,11 @@ export class UserService {
           username: userData.email.split('@')[0],
           password: hashedPassword,
         })
-        .returning();
+        .returning()
+        .get();
 
       // Remove password from response
-      const { password: _, ...userWithoutPassword } = newUser[0];
+      const { password: _, ...userWithoutPassword } = newUser;
 
       // Generate JWT token
       const token = generateToken({
@@ -55,6 +55,9 @@ export class UserService {
         name: userWithoutPassword.name,
         email: userWithoutPassword.email,
       });
+
+      // Save token to database
+      await this.saveAccessToken(token, newUser.id);
 
       return {
         user: userWithoutPassword,
@@ -81,7 +84,7 @@ export class UserService {
         .select()
         .from(users)
         .where(eq(users.email, loginData.email))
-        .then((res) => res[0]);
+        .get();
 
       if (!user) {
         throw new UnauthorizedError('Invalid email or password');
@@ -107,6 +110,9 @@ export class UserService {
         name: userWithoutPassword.name,
       });
 
+      // Save token to database
+      await this.saveAccessToken(token, user.id);
+
       return {
         user: userWithoutPassword,
         token,
@@ -121,21 +127,58 @@ export class UserService {
     }
   }
 
-  // Get user by ID
-  public async getUserById(id: number): Promise<UserResponse> {
+  // Logout user
+  public async logout(token: string): Promise<boolean> {
     try {
+      // Verify JWT token
+      const decodedToken = verifyToken(token);
+
+      // Find user by ID
       const user = await db
         .select()
         .from(users)
-        .where(eq(users.id, id))
-        .then((res) => res[0]);
+        .where(eq(users.id, decodedToken.id))
+        .get();
 
       if (!user) {
-        throw new NotFoundError(`User with id ${id} not found`);
+        throw new NotFoundError('User not found');
+      }
+
+      // Remove access token from database
+      await db
+        .update(users)
+        .set({
+          accessToken: null,
+        })
+        .where(eq(users.id, user.id));
+
+      return true;
+    } catch (error) {
+      logger.error('Error logging out user', { error });
+
+      throw error;
+    }
+  }
+
+  // Get user by access token
+  public async getUserByToken(token: string): Promise<UserResponse> {
+    try {
+      // Verify JWT token
+      const decodedToken = verifyToken(token);
+
+      // Find user by ID
+      const user = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, decodedToken.id))
+        .get();
+
+      if (!user) {
+        throw new NotFoundError('User not found');
       }
 
       // Remove password from response
-      const { password: _, ...userWithoutPassword } = user;
+      const { password: _password, accessToken: _accessToken, ...userWithoutPassword } = user;
 
       return userWithoutPassword;
     } catch (error) {
@@ -143,8 +186,18 @@ export class UserService {
         throw error;
       }
 
-      logger.error(`Error getting user by id ${id}`, { error });
+      logger.error('Error getting user by token', { error });
+
       throw error;
     }
+  }
+
+  public async saveAccessToken(token: string, newUserId: number) {
+    await db
+      .update(users)
+      .set({
+        accessToken: token,
+      })
+      .where(eq(users.id, newUserId));
   }
 }

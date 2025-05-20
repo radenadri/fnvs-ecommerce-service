@@ -208,7 +208,7 @@ describe('API Routes Integration Tests', () => {
         .get(`${prefix}/products/${slug}`)
         .set('Authorization', 'Bearer valid_token');
 
-      expect(response.status).toBe(500); // Since we're mocking a generic Error, it will be caught by the global error handler
+      expect(response.status).toBe(500);
       expect(ProductService.prototype.getProductBySlug).toHaveBeenCalledWith(
         slug
       );

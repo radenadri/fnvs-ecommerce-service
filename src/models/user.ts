@@ -8,6 +8,7 @@ export const users = sqliteTable('users', {
   email: text('email').notNull().unique(),
   username: text('username').notNull(),
   password: text('password').notNull(),
+  accessToken: text('access_token'),
   createdAt: integer('created_at', { mode: 'timestamp' })
     .notNull()
     .default(sql`(strftime('%s', 'now'))`),
@@ -22,6 +23,7 @@ export const UserSchema = z.object({
   email: z.string().email('Invalid email address'),
   username: z.string().min(3, 'Username must be at least 3 characters long'),
   password: z.string().min(8, 'Password must be at least 8 characters long'),
+  accessToken: z.string().optional(),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
 });
@@ -38,7 +40,7 @@ export const LoginUserSchema = z.object({
   password: z.string().min(1, 'Password is required'),
 });
 
-export const UserResponseSchema = UserSchema.omit({ password: true });
+export const UserResponseSchema = UserSchema.omit({ accessToken: true, password: true });
 
 export type User = z.infer<typeof UserSchema>;
 export type RegisterUser = z.infer<typeof RegisterUserSchema>;

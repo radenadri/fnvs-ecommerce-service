@@ -3,6 +3,7 @@ import { AuthController } from '@/controllers/auth.controller';
 import { validateSchema } from '@/middlewares/validation.middleware';
 import { LoginUserSchema, RegisterUserSchema } from '@/models/user';
 import { z } from 'zod';
+import { authenticate } from '@/middlewares/auth.middleware';
 
 const router = Router();
 const authController = new AuthController();
@@ -29,5 +30,11 @@ router.post(
   validateSchema(RegisterSchema),
   authController.register.bind(authController)
 );
+
+// Logout route
+router.post('/logout', authController.logout.bind(authController));
+
+// Get user by token route
+router.get('/me', authenticate, authController.me.bind(authController));
 
 export default router;

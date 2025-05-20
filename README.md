@@ -60,8 +60,10 @@ ecommerce-service/
 - `GET /api/v1/health` - Health check endpoint
 - `GET /api/v1/products` - List all products
 - `GET /api/v1/products/{slug}` - Get product details (JWT protected)
-- `POST /api/v1/login` - User login
-- `POST /api/v1/register` - User registration
+- `POST /api/v1/auth/login` - User login
+- `POST /api/v1/auth/register` - User registration
+- `POST /api/v1/auth/logout` - User logout
+- `POST /api/v1/auth/me` - Get user information (JWT protected)
 
 ## Getting Started
 
