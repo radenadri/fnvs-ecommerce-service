@@ -32,9 +32,9 @@ router.post(
 );
 
 // Logout route
-router.post('/logout', authController.logout.bind(authController));
+router.post('/logout', authenticate, authController.logout.bind(authController));
 
 // Get user by token route
-router.get('/me', authController.me.bind(authController));
+router.get('/me', authenticate, authController.me.bind(authController));
 
 export default router;
