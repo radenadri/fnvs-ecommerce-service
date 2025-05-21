@@ -1,6 +1,6 @@
-# Finvise Ecommerce Service
+# Finvise Product Listing Service
 
-This service handles product listings and authentication for an ecommerce platform.
+This service handles product listings and authentication. It provides a RESTful API for listing products, user authentication, and detailed product information.
 
 ## Features
 
@@ -30,29 +30,34 @@ This service handles product listings and authentication for an ecommerce platfo
 ```
 ecommerce-service/
 ├── src/
+│   ├── assets/           # Assets and static files
 │   ├── config/           # Configuration files
 │   ├── controllers/      # Route controllers
-│   ├── db/               # Database schemas and migrations
-│   │   ├── migrations/
-│   │   └── schema.ts
-│   ├── middleware/       # Custom middleware
+│   ├── db/               # Database configuration
+│   ├── middlewares/      # Custom middleware
 │   ├── models/           # Data models with Zod validation
 │   ├── routes/           # API routes with Swagger documentation
 │   ├── services/         # Business logic
-│   ├── types/            # TypeScript type definitions
 │   ├── utils/            # Utility functions
+│   └── app.ts            # Main application file
 │   └── index.ts          # Entry point
 ├── tests/                # Unit and integration tests
+│   └── integrations
+│   └── services
+│   └── utils
 ├── .dockerignore
 ├── .env.example
 ├── .eslintrc.js
 ├── .gitignore
 ├── Dockerfile
 ├── docker-compose.yml
-├── jest.config.js
+├── drizzle.config.ts
 ├── package.json
+├── package-lock.json
+├── prettierrc.json
+├── README.md
 ├── tsconfig.json
-└── README.md
+└── vitest.config.ts
 ```
 
 ## API Endpoints
@@ -63,56 +68,92 @@ ecommerce-service/
 - `POST /api/v1/auth/login` - User login
 - `POST /api/v1/auth/register` - User registration
 - `POST /api/v1/auth/logout` - User logout
-- `POST /api/v1/auth/me` - Get user information (JWT protected)
+- `GET /api/v1/auth/me` - Get user information (JWT protected)
 
 ## Getting Started
+
+Before running the service, make sure you have the following prerequisites set up:
 
 ### Prerequisites
 
 - Node.js LTS version
 - npm or yarn
+- Turso account for database
+- Sentry account for monitoring
+- Redis server for caching
+- Docker (optional)
+- Resend account for email verification (not implemented yet)
+
+### How to get Turso database URL and auth token
+1. Visit the [Turso website](https://turso.tech/) and sign up for an account.
+2. Create a new project and obtain your database URL and also the auth token.
+3. Update the `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` in your `.env` file.
+4. Run the following command to generate the schema:
+```bash
+npm run db:generate
+```
+
+### How to get Sentry DSN
+1. Visit the [Sentry website](https://sentry.io/) and sign up for an account.
+2. Create a new project and obtain your DSN.
+3. Update the `SENTRY_DSN` in your `.env` file.
+
+### How to setup Redis server
+Since i'm setting up Redis server on my VPS machine, you can install it using the following command:
+```bash
+sudo apt-get install redis-server
+```
+Then, you can start the Redis server using the following command:
+```bash
+sudo systemctl start redis
+```
+And, you can check the status of the Redis server using the following command:
+```bash
+sudo systemctl status redis
+```
+Then lets check the Redis server is running or not using the following command:
+```bash
+redis-cli ping
+```
+If you see `PONG` then Redis server is running. After that, you can update the `REDIS_HOST` and `REDIS_PORT` in your `.env` file. The default value is `localhost` and `6379`.
+
+### How to setup Resend API key
+1. Visit the [Resend website](https://resend.com) and sign up for an account.
+2. Create a new API key and obtain your API key.
+3. Update the `RESEND_API_KEY` in your `.env` file.
 
 ### Installation
 
 1. Clone the repository
 2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Set up environment variables:
-   ```bash
-   cp .env.example .env
-   ```
+```bash
+npm install
+```
+3. Set up environment variables in `.env` file:
+```bash
+cp .env.example .env
+```
 4. Run database migrations:
-   ```bash
-   npm run db:generate
-   npm run db:migrate
-   npm run db:push
-   ```
+```bash
+npm run db:migrate
+```
 5. Start the service:
-   ```bash
-   npm run dev
-   ```
+```bash
+npm run dev
+```
 
 ### Running Tests
-
 ```bash
-npm test
+npm run test
 ```
 
 ### Building for Production
-
 ```bash
 npm run build
-npm start
+npm run start
 ```
 
-## Docker Deployment
-
+### Docker Deployment (Optional)
 ```bash
 docker compose up -d
 ```
-
-## License
-
-[MIT](LICENSE)
