@@ -92,6 +92,22 @@ Before running the service, make sure you have the following prerequisites set u
 ```bash
 npm run db:generate
 ```
+5. For initial data, you can go into the Turso dashboard and go to `SQL Editor` and run the following command:
+```sql
+INSERT INTO products (
+  id,
+  name,
+  slug,
+  description,
+  price,
+  image
+) VALUES
+(1, 'Vinyl Virtuoso Opulenza', 'vinyl-virtuoso-opulenza', 'A timeless classic with a vintage twist. Perfect for collectors and enthusiasts.', 24999, 'https://res.cloudinary.com/dvoj90vcy/image/upload/v1747652196/Vinyl_Virtuoso_Opulenza-_699_dahes3.webp'),
+(2, 'Audio Arrogance AuralElite', 'audio-arrogance-auralelite', 'Experience the power of Audio Arrogance AuralElite. Immerse yourself in a world of high-quality audio.', 12999, 'https://res.cloudinary.com/dvoj90vcy/image/upload/v1747652204/Audio_Arrogance_AuralElite-_249_lwdjuh.webp'),
+(3, 'Decibel Dominator Deluxe', 'decibel-dominator-deluxe', 'Wake up early with Decibel Dominator Deluxe.', 18999, 'https://res.cloudinary.com/dvoj90vcy/image/upload/v1747652205/Decibel_Dominator_Deluxe-_249_fre7ds.webp'),
+(4, 'Corporate Commando Throne', 'corporate-commando-throne', 'Comfort chair for your work with Corporate Commando Throne.', 7999, 'https://res.cloudinary.com/dvoj90vcy/image/upload/v1747652205/Corporate_Commando_Throne-_600_i35tnk.webp'),
+(5, 'BlendMaster Elite Fusionator', 'blendmaster-elite-fusionator', 'Blend your food or drinks to greatness with BlendMaster Elite Fusionator.', 2999, 'https://res.cloudinary.com/dvoj90vcy/image/upload/v1747652205/BlendMaster_Elite_Fusionator-_299_swncfw.webp');
+```
 
 ### How to get Sentry DSN
 1. Visit the [Sentry website](https://sentry.io/) and sign up for an account.
